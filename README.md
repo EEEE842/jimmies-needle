@@ -3,7 +3,7 @@
 A web utility that lets you inject any Scratch project into **any** website using a custom bookmarklet.
 
 ##  How to Use
-1. Visit the [Site]((https://eeee842.github.io/jimmies-needle/))
+1. Visit the [Site](https://eeee842.github.io/jimmies-needle/)
 2. Paste a **Scratch Project Link** or **ID** into the input.
 3. Click **Done**.
 4. Drag the green **INJECTOR** button to your **Bookmarks Bar**.
