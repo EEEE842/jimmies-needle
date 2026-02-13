@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Injector Generator</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); padding: 2rem; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); text-align: center; width: 400px; }
+        h1 { font-size: 1.5rem; margin-bottom: 1.5rem; color: #38bdf8; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #1e293b; color: white; margin-bottom: 1rem; box-sizing: border-box; }
+        button { background: #38bdf8; color: #0f172a; border: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
+        button:hover { background: #7dd3fc; transform: translateY(-2px); }
+        #output { margin-top: 2rem; display: none; }
+        .bookmarklet-btn { display: inline-block; padding: 10px 20px; background: #22c55e; color: white; text-decoration: none; border-radius: 30px; font-weight: bold; cursor: move; box-shadow: 0 4px 14px 0 rgba(34, 197, 94, 0.39); }
+        p { font-size: 0.9rem; color: #94a3b8; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Project Injector</h1>
+    <input type="text" id="scratchLink" placeholder="Paste Scratch Project Link (or ID)...">
+    <button onclick="generate()">Done</button>
+
+    <div id="output">
+        <p>↓ Drag this to your bookmarks bar ↓</p>
+        <a id="dragBtn" class="bookmarklet-btn" href="#">Inject Project</a>
+    </div>
+</div>
+
+<script>
+    function generate() {
+        const input = document.getElementById('scratchLink').value;
+        const idMatch = input.match(/\d+/);
+        
+        if (!idMatch) {
+            alert("Please enter a valid Scratch Link or ID number!");
+            return;
+        }
+
+        const projectId = idMatch[0];
+        
+        // This code uses TurboWarp's embed logic to "paste" the game onto the screen
+        const code = `javascript:(function(){
+            var div = document.createElement('div');
+            div.style.position = 'fixed';
+            div.style.top = '50px';
+            div.style.left = '50px';
+            div.style.zIndex = '999999';
+            div.style.border = '5px solid #38bdf8';
+            div.style.borderRadius = '10px';
+            div.style.backgroundColor = '#000';
+            div.innerHTML = '<iframe src="https://turbowarp.org{projectId}/embed?cloud_host=wss://clouddata.turbowarp.org" width="482" height="412" frameborder="0" allowtransparency="true" allowfullscreen></iframe><button onclick="this.parentElement.remove()" style="position:absolute;top:-25px;right:-25px;background:red;color:white;border-radius:50%;border:none;cursor:pointer;padding:5px 10px;">X</button>';
+            document.body.appendChild(div);
+        })();`;
+
+        const btn = document.getElementById('dragBtn');
+        btn.href = code.replace(/\s+/g, ' '); // Minify for the URL
+        document.getElementById('output').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
