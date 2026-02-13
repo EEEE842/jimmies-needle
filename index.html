@@ -2,83 +2,101 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slick Scratch Injector</title>
     <style>
         :root { --glow: #38bdf8; --bg: #020617; }
-        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
         
         .card { 
             background: rgba(15, 23, 42, 0.8); 
-            backdrop-filter: blur(12px); 
+            backdrop-filter: blur(15px); 
             padding: 3rem; 
             border-radius: 24px; 
-            border: 1px solid rgba(56, 189, 248, 0.3); 
-            box-shadow: 0 0 40px rgba(56, 189, 248, 0.15), inset 0 0 20px rgba(56, 189, 248, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.4); 
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.2);
             text-align: center; 
             width: 420px;
-            animation: fadeIn 0.8s ease-out;
         }
 
-        h1 { font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--glow); text-shadow: 0 0 15px rgba(56, 189, 248, 0.6); letter-spacing: -0.5px; }
+        h1 { font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--glow); text-shadow: 0 0 20px rgba(56, 189, 248, 0.8); }
 
         input { 
             width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); 
             background: #1e293b; color: white; margin-bottom: 1.2rem; box-sizing: border-box; 
             outline: none; transition: 0.3s;
         }
-        input:focus { border-color: var(--glow); box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
 
         button { 
             background: var(--glow); color: #0f172a; border: none; padding: 14px; border-radius: 12px; 
-            font-weight: 800; cursor: pointer; transition: all 0.3s; width: 100%; text-transform: uppercase;
+            font-weight: 800; cursor: pointer; transition: all 0.3s; width: 100%;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
         }
-        button:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3); }
+        button:hover { transform: scale(1.02); box-shadow: 0 0 25px var(--glow); }
 
-        #output { margin-top: 2.5rem; display: none; animation: slideUp 0.5s ease-out; }
+        #output { margin-top: 2.5rem; display: none; }
         
         .bookmarklet-btn { 
             display: inline-block; padding: 12px 28px; background: #22c55e; color: white; 
             text-decoration: none; border-radius: 50px; font-weight: bold; cursor: move; 
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4); transition: 0.3s;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+            animation: pulse 2s infinite;
         }
-        .bookmarklet-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(34, 197, 94, 0.6); }
 
-        p { font-size: 0.85rem; color: #64748b; margin-top: 1rem; line-height: 1.5; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(34, 197, 94, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h1>Project Injector</h1>
-    <input type="text" id="projInput" placeholder="Enter Scratch Link or ID">
-    <button onclick="generate()">Generate Injector</button>
+    <input type="text" id="projInput" placeholder="Paste Scratch Link or ID here...">
+    <button onclick="generate()">Done</button>
 
     <div id="output">
-        <p>Grab this and drop it in your Bookmark Bar:</p>
-        <a id="dragBtn" class="bookmarklet-btn" href="#">DRAG ME</a>
-        <p style="font-size: 0.75rem;">Works on Scratch & TurboWarp. Cloud enabled.</p>
+        <p style="color: #94a3b8; font-size: 0.9rem;">Drag this to your Bookmarks Bar:</p>
+        <a id="dragBtn" class="bookmarklet-btn" href="#">INJECTOR</a>
     </div>
 </div>
 
 <script>
     function generate() {
         const val = document.getElementById('projInput').value;
-        const id = val.match(/\d+/) ? val.match(/\d+/)[0] : null;
+        // Fix: Extracts numbers from any string (link or ID)
+        const match = val.match(/\d+/);
         
-        if (!id) { return alert("Invalid ID!"); }
+        if (!match) { 
+            alert("Error: Please paste a valid Scratch link or ID!"); 
+            return; 
+        }
 
-        // The script that runs when you click the bookmark
+        const id = match[0];
+
+        // This is the literal code that will be "bookmarked"
         const code = `javascript:(function(){
-            document.body.innerHTML = '<div id="status" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;color:#38bdf8;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:30px;z-index:999999;transition:0.5s;">Injecting...</div>';
+            document.body.innerHTML = '<div id="status" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;color:#38bdf8;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:40px;z-index:999999;text-shadow:0 0 20px #38bdf8;">Injecting...</div>';
             
             setTimeout(() => {
                 const s = document.getElementById("status");
                 s.innerText = "Injection Complete";
                 s.style.color = "#22c55e";
+                s.style.textShadow = "0 0 20px #22c55e";
                 
                 setTimeout(() => {
-                    document.body.innerHTML = '<iframe src="
+                    document.body.innerHTML = '<iframe src="https://turbowarp.org{id}/embed?cloud_host=wss://clouddata.turbowarp.org" style="position:fixed;top:0;left:0;width:100vw;height:100vh;border:none;z-index:999998;" allowfullscreen></iframe>';
+                }, 1000);
+            }, 1500);
+        })();`;
+
+        const btn = document.getElementById('dragBtn');
+        // Clean up code for the URL format
+        btn.href = code.trim().replace(/\s\s+/g, ' '); 
+        document.getElementById('output').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
